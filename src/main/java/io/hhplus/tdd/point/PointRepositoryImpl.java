@@ -1,17 +1,13 @@
 package io.hhplus.tdd.point;
 
 import io.hhplus.tdd.database.UserPointTable;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@AllArgsConstructor
 public class PointRepositoryImpl implements PointRepository{
-    UserPointTable userPointTable = new UserPointTable();
-
-
-    public UserPoint chargeAmount(long id, long amount) {
-        UserPoint userPoint = userPointTable.selectById(id);
-        return userPointTable.insertOrUpdate(id, userPoint.point()+amount);
-    }
+    private final UserPointTable userPointTable;
 
     @Override
     public UserPoint findById(long id) {
