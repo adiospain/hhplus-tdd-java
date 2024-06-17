@@ -5,21 +5,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PointServiceSpy implements PointService {
-    private static final Logger log = LoggerFactory.getLogger(PointServiceSpy.class);
-    private final PointRepository pointRepository;
+    private final PointRepositoryImpl pointRepository;
 
+    private final ThreadLocal<Long> amountBeforeCharge = new ThreadLocal<>();
+    private final ThreadLocal<Long> amountAfterCharge = new ThreadLocal<>();
 
-    public PointServiceSpy(PointRepository pointRepository) {
+    public PointServiceSpy(PointRepositoryImpl pointRepository) {
         this.pointRepository = pointRepository;
     }
 
     @Override
     public UserPoint chargeAmount(long id, long amount) {
-
         UserPoint userPoint = pointRepository.findById(id);
-        log.info("Before charge | id : {}, amount : {}", userPoint.id(), userPoint.point());
+
+        amountBeforeCharge.set(userPoint.point());
         userPoint = pointRepository.update(id, userPoint.point()+amount);
-        log.info("After charge | id : {}, amount : {}", userPoint.id(), userPoint.point());
+
+        amountAfterCharge.set(userPoint.point());
+
         return userPoint;
+    }
+    public long getAmountBeforeCharge() {
+        return amountBeforeCharge.get();
+    }
+
+    public long getAmountAfterCharge() {
+        return amountAfterCharge.get();
     }
 }
