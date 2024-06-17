@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class PointServiceImpl implements PointService {
 
-    private final PointRepositoryImpl pointRepository;
+    private final PointRepository pointRepository;
 
     public UserPoint chargeAmount(long id, long amount) {
         return pointRepository.chargeAmount(id, amount);
