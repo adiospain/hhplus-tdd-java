@@ -4,5 +4,5 @@ import lombok.AllArgsConstructor;
 
 
 public interface PointService {
-    public UserPoint chargeAmount(long id, long amount);
+    public UserPoint charge(long id, long amount);
 }

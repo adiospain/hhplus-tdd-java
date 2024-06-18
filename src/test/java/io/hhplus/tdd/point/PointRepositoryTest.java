@@ -2,6 +2,7 @@ package io.hhplus.tdd.point;
 
 import io.hhplus.tdd.database.UserPointTable;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,6 +20,7 @@ public class PointRepositoryTest {
     }
 
     @Test
+    @DisplayName("데이터베이스에 이미 존재하는 특정 사용자 찾기")
     void findById() {
         //given : 데이터베이스에 이미 존재하는 특정 사용자
         long id = 3L;
@@ -35,6 +37,7 @@ public class PointRepositoryTest {
     }
 
     @Test
+    @DisplayName("포인트 충전하고 업데이트하기")
     void update() {
         // given : 데이터베이스에 이미 존재하는 특정 사용자
         long id = 3L;
@@ -46,6 +49,7 @@ public class PointRepositoryTest {
         UserPoint updatedUserPoint = pointRepository.update(userPoint.id(), userPoint.point() + additionalAmount);
 
         // then : 반환된 결과가 예상 값과 일치하는지 검사
+        assertNotEquals(userPoint, updatedUserPoint);
         assertEquals(userPoint.id(), updatedUserPoint.id());
         assertEquals(userPoint.point() + additionalAmount, updatedUserPoint.point());
         assertTrue(userPoint.updateMillis() < updatedUserPoint.updateMillis());

@@ -9,14 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PointServiceTest {
 
-    private PointRepositoryImpl pointRepositoryImpl;
+    private PointRepository pointRepository;
     private PointServiceSpy pointServiceSpy;
 
     @BeforeEach
     void setUp(){
         UserPointTable userPointTable = new UserPointTable();
-        pointRepositoryImpl = new PointRepositoryImpl(userPointTable);
-        pointServiceSpy = new PointServiceSpy(pointRepositoryImpl);
+        pointRepository = new PointRepositoryImpl (userPointTable);
+        pointServiceSpy = new PointServiceSpy(pointRepository);
     }
 
     @Test
@@ -27,9 +27,10 @@ public class PointServiceTest {
         long amount = 1234L;
 
         //when : 충전 전과 후의 금액 차를 모니터링 하기 위해 스파이 객체의 충전 메서드 호출
-        pointServiceSpy.chargeAmount(id, amount);
+        pointServiceSpy.charge(id, amount);
 
         //then : 충전 금액이 올바르게 반영되었는지 검증
         assertEquals (amount, pointServiceSpy.getAmountAfterCharge() - pointServiceSpy.getAmountBeforeCharge());
+        int a = 0;
     }
 }

@@ -9,7 +9,8 @@ public class PointServiceImpl implements PointService {
 
     private final PointRepository pointRepository;
 
-    public UserPoint chargeAmount(long id, long amount) {
+    @Override
+    public UserPoint charge(long id, long amount) {
         UserPoint userPoint = pointRepository.findById(id);
         return pointRepository.update(id, userPoint.point()+amount);
     }

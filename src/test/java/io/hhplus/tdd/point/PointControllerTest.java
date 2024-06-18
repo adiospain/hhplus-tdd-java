@@ -36,7 +36,7 @@ public class PointControllerTest {
         UserPoint userPoint = new UserPoint(id, 0 + amount, System.currentTimeMillis());
 
         //when : pointService의 모의 동작 설정
-        when(pointService.chargeAmount(id, amount)).thenReturn(userPoint);
+        when(pointService.charge(id, amount)).thenReturn(userPoint);
 
         //when : mockMvc를 사용하여 API 엔드포인트를 호출하고 결과를 가져옴
         ResultActions response = mockMvc.perform(patch("/point/{id}/charge", id)
@@ -47,6 +47,8 @@ public class PointControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.point").value(amount));
+        //then : 메서드가 호출되었는지 확인
+        verify(pointService).charge(id, amount);
 
         //then : 추가적으로 JSON 응답을 검증하기 위해 문자열로 변환
         MvcResult mvcResult = response.andReturn();
@@ -59,5 +61,16 @@ public class PointControllerTest {
         //then : 필드값 검증
         assertEquals(id, actualUserPoint.id());
         assertEquals(0+ amount, actualUserPoint.point());
+    }
+
+    @Test
+    @DisplayName("(포인트가 0원인 사용자가) 포인트를 사용한다")
+    void usingPointWhoHasZero(){
+        //given : 특정 사용자와 사용할 포인트 금액
+        long id = 4L;
+        long amount = 3300L;
+        UserPoint userPoint = new UserPoint(id, amount, System.currentTimeMillis());
+
+        when(pointService.charge(id, amount)).thenReturn(userPoint);
     }
 }

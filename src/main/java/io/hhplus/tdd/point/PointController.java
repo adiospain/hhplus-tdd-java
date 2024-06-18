@@ -45,7 +45,7 @@ public class PointController {
             @PathVariable long id,
             @RequestBody long amount
     ) {
-        return pointService.chargeAmount(id, amount);
+        return pointService.charge(id, amount);
     }
 
     /**
