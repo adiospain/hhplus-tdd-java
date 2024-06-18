@@ -31,6 +31,11 @@ public class PointServiceSpy implements PointService {
     }
 
     @Override
+    public UserPoint point(long id) {
+        return null;
+    }
+
+    @Override
     public UserPoint use(long id, long amount) {
         UserPoint userPoint = pointRepository.findById(id);
         idBefore.set(userPoint.id());

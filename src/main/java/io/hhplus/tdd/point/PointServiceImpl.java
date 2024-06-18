@@ -16,6 +16,11 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
+    public UserPoint point(long id) {
+        return pointRepository.findById(id);
+    }
+
+    @Override
     public UserPoint use(long id, long amount) {
         UserPoint userPoint = pointRepository.findById(id);
         long remainingPoint = userPoint.point() - amount;

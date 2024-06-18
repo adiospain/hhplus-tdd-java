@@ -21,10 +21,17 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 조회하는 기능을 작성해주세요.
      */
     @GetMapping("{id}")
-    public UserPoint point(
+    public
+//    ResponseEntity
+//            <
+            UserPoint
+     //       >
+    point(
             @PathVariable long id
     ) {
-        return new UserPoint(0, 0, 0);
+        UserPoint userPoint = pointService.point(id);
+        //return ResponseEntity.ok(userPoint);
+        return userPoint;
     }
 
     /**
