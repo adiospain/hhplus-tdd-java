@@ -5,23 +5,29 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 
 public class PointServiceTest {
 
     private PointRepository pointRepository;
     private PointServiceSpy pointServiceSpy;
-    private PointService pointService;
+
+    private PointRepository pointRepositoryMock;
+    private PointService pointServiceMock;
 
     @BeforeEach
     void setUp(){
+        //MockitoAnnotations.openMocks(this);
         UserPointTable userPointTable = new UserPointTable();
         pointRepository = new PointRepositoryImpl (userPointTable);
         pointServiceSpy = new PointServiceSpy(pointRepository);
-        pointService = new PointServiceImpl(pointRepository);
+
+        pointRepositoryMock = Mockito.mock(PointRepositoryImpl.class);
+        pointServiceMock = new PointServiceImpl(pointRepositoryMock);
     }
 
     @Test
@@ -41,19 +47,25 @@ public class PointServiceTest {
     }
 
     @Test
-    @DisplayName("포인트를 사용한다 : 2000 충전 후 1234 사용 시, 766 포인트 반환")
+    @DisplayName("포인트를 사용한다 : 2000 소지 중 1234 사용 시, 766 포인트 반환")
     void use(){
-        //given
+        //given : 포인트 소지량
         long id = 2L;
-        long amount = 2000L;
-        pointService.charge(id, amount);
+        long currentPoint = 2000L;
 
-        //when
-        amount = 1234L;
-        UserPoint userPoint = pointServiceSpy.use(id, amount);
+        //given : 포인트 사용량
+        long minusAmount = 1234L;
 
-        assertEquals(true, pointServiceSpy.isTargetTheSame());
-        assertEquals(2000L-1234L, pointServiceSpy.getAmountAfterCharge());
-        assertEquals(pointServiceSpy.getAmountBeforeCharge(), pointServiceSpy.getAmountAfterCharge() + amount);
+        //given : Repository 리턴값 설정
+        UserPoint userPoint = new UserPoint(id, currentPoint, System.currentTimeMillis());
+        when(pointRepositoryMock.findById(id)).thenReturn(userPoint);
+        when(pointRepositoryMock.update(id, currentPoint - minusAmount)).thenReturn(new UserPoint(id, currentPoint - minusAmount, System.currentTimeMillis()));
+
+        //when : 포인트 사용 시뮬레이션
+        userPoint = pointServiceMock.use(id, minusAmount);
+
+        //then : 충전 금액이 올바르게 반영되었는지 검증
+        assertEquals(id, userPoint.id());
+        assertEquals(2000L-1234L, userPoint.point());
     }
 }
