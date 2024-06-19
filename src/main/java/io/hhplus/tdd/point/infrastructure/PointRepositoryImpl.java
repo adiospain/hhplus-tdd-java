@@ -1,12 +1,13 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.point.infrastructure;
 
 import io.hhplus.tdd.database.UserPointTable;
+import io.hhplus.tdd.point.dto.UserPoint;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @AllArgsConstructor
-public class PointRepositoryImpl implements PointRepository{
+public class PointRepositoryImpl implements PointRepository {
     private final UserPointTable userPointTable;
 
     @Override

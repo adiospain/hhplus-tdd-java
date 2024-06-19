@@ -1,7 +1,12 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.point.application;
 
+import io.hhplus.tdd.point.dto.PointHistory;
+import io.hhplus.tdd.point.dto.UserPoint;
+import io.hhplus.tdd.point.infrastructure.PointRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -25,5 +30,10 @@ public class PointServiceImpl implements PointService {
         UserPoint userPoint = pointRepository.findById(id);
         long remainingPoint = userPoint.point() - amount;
         return pointRepository.update(id, remainingPoint);
+    }
+
+    @Override
+    public List<PointHistory> history(long id) {
+        return List.of();
     }
 }
