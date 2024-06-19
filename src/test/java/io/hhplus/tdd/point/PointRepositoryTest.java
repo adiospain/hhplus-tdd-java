@@ -20,7 +20,7 @@ public class PointRepositoryTest {
     }
 
     @Test
-    @DisplayName("데이터베이스에 이미 존재하는 특정 사용자 찾기")
+    @DisplayName("데이터베이스에 이미 존재하는 특정 사용자와 포인트 리턴")
     void findById() {
         //given : 데이터베이스에 이미 존재하는 특정 사용자
         long id = 3L;
@@ -37,7 +37,7 @@ public class PointRepositoryTest {
     }
 
     @Test
-    @DisplayName("포인트 충전하고 업데이트하기")
+    @DisplayName("포인트 충전하고 업데이트")
     void updateAfterCharge() {
         // given : 데이터베이스에 이미 존재하는 특정 사용자
         long id = 3L;
@@ -56,7 +56,7 @@ public class PointRepositoryTest {
     }
 
     @Test
-    @DisplayName("포인트 사용하고 업데이트하기")
+    @DisplayName("포인트 사용하고 업데이트")
     void updateAfterUse() {
         // given : 데이터베이스에 이미 존재하는 특정 사용자
         long id = 3L;
