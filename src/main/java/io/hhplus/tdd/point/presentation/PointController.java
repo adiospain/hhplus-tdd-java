@@ -1,5 +1,8 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.point.presentation;
 
+import io.hhplus.tdd.point.domain.entity.history.PointHistory;
+import io.hhplus.tdd.point.application.PointService;
+import io.hhplus.tdd.point.dto.UserPoint;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +27,7 @@ public class PointController {
     public
 //    ResponseEntity
 //            <
-            UserPoint
+    UserPoint
      //       >
     point(
             @PathVariable long id
