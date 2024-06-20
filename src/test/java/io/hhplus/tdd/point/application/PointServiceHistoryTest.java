@@ -26,7 +26,7 @@ public class PointServiceHistoryTest {
     }
 
     @Test
-    @DisplayName("포인트 내역이 없는 사용자의 내역을 조회 한다")
+    @DisplayName("성공")
     void history() throws Exception {
         //given
         long userId = 3L;

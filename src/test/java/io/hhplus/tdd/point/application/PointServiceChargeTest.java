@@ -23,14 +23,14 @@ public class PointServiceChargeTest {
     }
 
     @Test
-    @DisplayName("포인트를 충전한다 : Mock 활용")
+    @DisplayName("포인트를 충전한다 : 성공")
     void charge()  {
         //given : 포인트 소지량
         long id = 2L;
         long currentPoint = 1000L;
 
         //given : 포인트 충전량
-        long addAmount = 1234L;
+        long addAmount = 1200L;
 
         //given : Repository 리턴값 설정
         UserPoint userPoint = new UserPoint(id, currentPoint, System.currentTimeMillis());

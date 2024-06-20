@@ -28,6 +28,10 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public UserPoint point(long id) {
+        if (id <= 0) {
+            ErrorResponse errorResponse = new ErrorResponse("INVALID_USER_ID", "유효하지 않은 ID 입니다.");
+            throw new PointException(errorResponse);
+        }
         return pointRepository.findById(id);
     }
 
