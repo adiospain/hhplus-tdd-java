@@ -1,5 +1,6 @@
 package io.hhplus.tdd.point.infrastructure;
 
+import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.point.dto.UserPoint;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,15 +9,18 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("Repository 사용자 포인트 업데이트")
 public class PointRepositoryUpdateTest {
 
     private PointRepository pointRepository;
     private UserPointTable userPointTable;
+    private PointHistoryTable pointHistoryTable;
 
     @BeforeEach
     void setUp(){
         userPointTable = new UserPointTable();
-        this.pointRepository = new PointRepositoryImpl(userPointTable);
+        pointHistoryTable = new PointHistoryTable();
+        this.pointRepository = new PointRepositoryImpl(userPointTable, pointHistoryTable);
     }
 
     @Test
