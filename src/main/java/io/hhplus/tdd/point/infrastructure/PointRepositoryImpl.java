@@ -32,7 +32,7 @@ public class PointRepositoryImpl implements PointRepository {
     }
 
     @Override
-    public List<PointHistory> findHistoryById(long id) {
+    public List<PointHistory> findHistoryByUserId(long id) {
         return pointHistoryTable.selectAllByUserId(id);
     }
 
