@@ -34,6 +34,6 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public List<PointHistory> history(long id) {
-        return List.of();
+        return pointRepository.findHistoryById(id);
     }
 }
