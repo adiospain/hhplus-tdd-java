@@ -2,6 +2,7 @@ package io.hhplus.tdd.point.application;
 
 import io.hhplus.tdd.exception.CustomException;
 import io.hhplus.tdd.exception.ErrorResponse;
+import io.hhplus.tdd.point.domain.TransactionType;
 import io.hhplus.tdd.point.dto.PointHistory;
 import io.hhplus.tdd.point.dto.UserPoint;
 import io.hhplus.tdd.point.exception.PointException;
@@ -20,13 +21,18 @@ public class PointServiceImpl implements PointService {
     @Override
     public UserPoint charge(long id, long amount) {
         UserPoint userPoint = pointRepository.findById(id);
-        return pointRepository.update(id, userPoint.point()+amount);
+        long totalPoint = userPoint.point() + amount;
+        pointRepository.insertHistory(id, amount, TransactionType.CHARGE, System.currentTimeMillis());
+        return pointRepository.update(id, totalPoint);
     }
 
     @Override
     public UserPoint point(long id) {
         return pointRepository.findById(id);
     }
+
+
+
 
     @Override
     public UserPoint use(long id, long amount) {
@@ -40,6 +46,7 @@ public class PointServiceImpl implements PointService {
             throw new PointException(errorResponse);
         }
         long remainingPoint = userPoint.point() - amount;
+        pointRepository.insertHistory(id, amount, TransactionType.USE, System.currentTimeMillis());
         return pointRepository.update(id, remainingPoint);
     }
 

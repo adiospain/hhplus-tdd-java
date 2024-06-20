@@ -2,6 +2,7 @@ package io.hhplus.tdd.point.infrastructure;
 
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
+import io.hhplus.tdd.point.domain.TransactionType;
 import io.hhplus.tdd.point.dto.PointHistory;
 import io.hhplus.tdd.point.dto.UserPoint;
 import lombok.AllArgsConstructor;
@@ -33,5 +34,10 @@ public class PointRepositoryImpl implements PointRepository {
     @Override
     public List<PointHistory> findHistoryById(long id) {
         return pointHistoryTable.selectAllByUserId(id);
+    }
+
+    @Override
+    public PointHistory insertHistory(long userId, long amount, TransactionType type, long updateMillis) {
+        return pointHistoryTable.insert(userId, amount, type, updateMillis);
     }
 }
