@@ -1,9 +1,7 @@
 package io.hhplus.tdd.point.application;
 
-import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.point.dto.UserPoint;
 import io.hhplus.tdd.point.infrastructure.PointRepository;
-import io.hhplus.tdd.point.infrastructure.PointRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +10,7 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+@DisplayName("Service 포인트 사용")
 public class PointServiceUseTest {
 
     private PointRepository pointRepositoryMock;
@@ -19,7 +18,7 @@ public class PointServiceUseTest {
 
     @BeforeEach
     void setUp(){
-        pointRepositoryMock = Mockito.mock(PointRepositoryImpl.class);
+        pointRepositoryMock = Mockito.mock(PointRepository.class);
         pointServiceMock = new PointServiceImpl(pointRepositoryMock);
     }
 
