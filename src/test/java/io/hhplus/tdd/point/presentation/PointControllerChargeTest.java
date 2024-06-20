@@ -24,9 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = PointController.class)
 public class PointControllerChargeTest {
-
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     @Autowired
     private MockMvc mockMvc;
 

@@ -11,9 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -32,6 +37,18 @@ public class PointControllerUseTest {
 
     @MockBean
     private PointService pointService;
+
+    void printResponse(MockHttpServletResponse response) throws UnsupportedEncodingException {
+        logger.info("Status = {}", response.getStatus());
+        logger.info("Error message = {}", response.getErrorMessage());
+        logger.info("Headers = {}", response.getHeaderNames().stream()
+                .collect(Collectors.toMap(h -> h, response::getHeader)));
+        logger.info("Content type = {}", response.getContentType());
+        logger.info("Body = {}", response.getContentAsString());
+        logger.info("Forwarded URL = {}", response.getForwardedUrl());
+        logger.info("Redirected URL = {}", response.getRedirectedUrl());
+        logger.info("Cookies = {}", Arrays.toString(response.getCookies()));
+    }
 
     @Test
     @DisplayName("(포인트가 3000인 사용자가) 포인트를 사용한다")
