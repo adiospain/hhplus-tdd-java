@@ -20,26 +20,23 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public UserPoint charge(long id, long amount) {
-        if (id <= 0){
-            ErrorResponse errorResponse = new ErrorResponse("INVALID_USER_ID", "유효하지 않은 ID 입니다.");
-            throw new PointException(errorResponse);
-        }
+        validateParameter(id, amount);
         UserPoint userPoint = pointRepository.findById(id);
+
         long totalPoint = userPoint.point() + amount;
+
         if (totalPoint < 0){
             ErrorResponse errorResponse = new ErrorResponse("OVERFLOW", "오버플로우 발생 했습니다.");
             throw new PointException(errorResponse);
         }
+
         pointRepository.insertHistory(id, amount, TransactionType.CHARGE, System.currentTimeMillis());
         return pointRepository.update(id, totalPoint);
     }
 
     @Override
     public UserPoint point(long id) {
-        if (id <= 0) {
-            ErrorResponse errorResponse = new ErrorResponse("INVALID_USER_ID", "유효하지 않은 ID 입니다.");
-            throw new PointException(errorResponse);
-        }
+        validateUserId(id);
         return pointRepository.findById(id);
     }
 
@@ -48,14 +45,8 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public UserPoint use(long id, long amount) {
-        if (id <= 0){
-            ErrorResponse errorResponse = new ErrorResponse("INVALID_USER_ID", "유효하지 않은 ID 입니다.");
-            throw new PointException(errorResponse);
-        }
-        if (amount <= 0 ) {
-            ErrorResponse errorResponse = new ErrorResponse("INVALID_AMOUNT", "사용 포인트는 양수여야 합니다.");
-            throw new PointException(errorResponse);
-        }
+        validateParameter(id, amount);
+
         UserPoint userPoint = pointRepository.findById(id);
         if (userPoint.point() < amount){
             ErrorResponse errorResponse = new ErrorResponse("CONFLICT", "포인트가 충분하지 않습니다.");
@@ -68,11 +59,23 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public List<PointHistory> history(long userId) {
-        if ( userId <= 0 ) {
-            ErrorResponse errorResponse = new ErrorResponse("INVALID_AMOUNT", "사용 포인트는 양수여야 합니다.");
-            throw new PointException(errorResponse);
-        }
+        validateUserId(userId);
 
         return pointRepository.findHistoryByUserId(userId);
     }
+
+    public void validateUserId(long id){
+        if (id <= 0 ) {
+            ErrorResponse errorResponse = new ErrorResponse("INVALID_USER_ID", "유효하지 않은 ID 입니다.");
+            throw new PointException(errorResponse);
+        }
+    }
+
+    public void validateParameter(long id, long amount){
+        validateUserId(id);
+        if (amount <= 0 ) {
+            throw new PointException(new ErrorResponse("INVALID_AMOUNT", "사용 포인트는 양수여야 합니다."));
+        }
+    }
+
 }
