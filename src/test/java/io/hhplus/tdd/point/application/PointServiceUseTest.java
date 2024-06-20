@@ -27,7 +27,7 @@ public class PointServiceUseTest {
 
     @Test
     @DisplayName("잔고가 충분한 경우, 성공")
-    void useSufficientPoint_Suceed(){
+    void useSufficientPoint_Success(){
         //given : 포인트 소지량
         long id = 2L;
         long currentPoint = 2000L;
@@ -70,44 +70,52 @@ public class PointServiceUseTest {
     }
 
     @Test
+    @DisplayName("사용자 id가 음수인 경우, 실패")
+    void useNegativeID_Fail(){
+        //given : 포인트 소지량
+        long id = -2L;
+        long usePoint = 2100L;
+
+        Exception pointException = assertThrows(PointException.class, ()->{
+            pointServiceMock.use(id, usePoint);
+        });
+    }
+    @Test
+    @DisplayName("사용자 id가 0인 경우, 실패")
+    void useZeroID_Fail(){
+        //given : 포인트 소지량
+        long id = 0L;
+        long usePoint = 2100L;
+
+        Exception pointException = assertThrows(PointException.class, ()->{
+            pointServiceMock.use(id, usePoint);
+        });
+    }
+
+    @Test
     @DisplayName("사용 포인트가 음수인 경우, 실패")
     void useNegativeValue_Fail(){
-        //given : 포인트 소지량
+        //given : 사용자와 포인트 사용량
         long id = 2L;
-        long currentPoint = 1000L;
-
-        //given : 포인트 사용량
-        long minusAmount = -1200L;
-
-        //given : Repository 리턴값 설정
-        UserPoint userPoint = new UserPoint(id, currentPoint, System.currentTimeMillis());
-        when(pointRepositoryMock.findById(id)).thenReturn(userPoint);
+        long useAmount = -1200L;
 
         //when: 포인트 사용 시뮬레이션
         //then: 예외 발생 여부 검증
         Exception pointException = assertThrows(PointException.class, ()->{
-            pointServiceMock.use(id, minusAmount);
+            pointServiceMock.use(id, useAmount);
         });
     }
 
     @Test
     @DisplayName("사용 포인트가 0인 경우, 실패")
     void useZeroValue_Fail(){
-        //given : 포인트 소지량
+        //given : 사용자와 포인트 사용량
         long id = 2L;
-        long currentPoint = 1000L;
-
-        //given : 포인트 사용량
-        long minusAmount = 0L;
+        long useAmount = 0L;
 
         //given : Repository 리턴값 설정
-        UserPoint userPoint = new UserPoint(id, currentPoint, System.currentTimeMillis());
-        when(pointRepositoryMock.findById(id)).thenReturn(userPoint);
-
-        //when: 포인트 사용 시뮬레이션
-        //then: 예외 발생 여부 검증
         Exception pointException = assertThrows(PointException.class, ()->{
-            pointServiceMock.use(id, minusAmount);
+            pointServiceMock.use(id, useAmount);
         });
     }
 

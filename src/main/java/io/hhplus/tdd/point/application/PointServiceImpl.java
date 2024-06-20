@@ -20,8 +20,16 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public UserPoint charge(long id, long amount) {
+        if (id <= 0){
+            ErrorResponse errorResponse = new ErrorResponse("INVALID_USER_ID", "유효하지 않은 ID 입니다.");
+            throw new PointException(errorResponse);
+        }
         UserPoint userPoint = pointRepository.findById(id);
         long totalPoint = userPoint.point() + amount;
+        if (totalPoint < 0){
+            ErrorResponse errorResponse = new ErrorResponse("OVERFLOW", "오버플로우 발생 했습니다.");
+            throw new PointException(errorResponse);
+        }
         pointRepository.insertHistory(id, amount, TransactionType.CHARGE, System.currentTimeMillis());
         return pointRepository.update(id, totalPoint);
     }
@@ -40,6 +48,10 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public UserPoint use(long id, long amount) {
+        if (id <= 0){
+            ErrorResponse errorResponse = new ErrorResponse("INVALID_USER_ID", "유효하지 않은 ID 입니다.");
+            throw new PointException(errorResponse);
+        }
         if (amount <= 0 ) {
             ErrorResponse errorResponse = new ErrorResponse("INVALID_AMOUNT", "사용 포인트는 양수여야 합니다.");
             throw new PointException(errorResponse);
@@ -55,7 +67,12 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public List<PointHistory> history(long id) {
-        return pointRepository.findHistoryById(id);
+    public List<PointHistory> history(long userId) {
+        if ( userId <= 0 ) {
+            ErrorResponse errorResponse = new ErrorResponse("INVALID_AMOUNT", "사용 포인트는 양수여야 합니다.");
+            throw new PointException(errorResponse);
+        }
+
+        return pointRepository.findHistoryByUserId(userId);
     }
 }
