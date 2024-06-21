@@ -1,5 +1,6 @@
 package io.hhplus.tdd.point.application;
 
+import io.hhplus.tdd.point.domain.TransactionType;
 import io.hhplus.tdd.point.dto.PointHistory;
 import io.hhplus.tdd.point.exception.PointException;
 import io.hhplus.tdd.point.infrastructure.PointRepository;
@@ -28,8 +29,32 @@ public class PointServiceHistoryTest {
     }
 
     @Test
-    @DisplayName("성공")
-    void history() throws Exception {
+    @DisplayName("포인트 내역이 있는 사용자의 경우, 내역 리스트를 리턴")
+    void retrievePointHistory() throws Exception {
+        //given
+        long userId = 3L;
+        long amount = 1000L;
+
+        long time = System.currentTimeMillis();
+        List<PointHistory> fakeHistories = List.of(
+                new PointHistory(1L,3L, 2000L, TransactionType.CHARGE, System.currentTimeMillis()),
+                new PointHistory(2L, 3L, 500L, TransactionType.USE, System.currentTimeMillis())
+
+        );
+
+        when(pointRepositoryMock.findHistoryByUserId(userId)).thenReturn(fakeHistories);
+
+        //when
+        List<PointHistory> histories = pointServiceMock.history(userId);
+        verify(pointRepositoryMock).findHistoryByUserId(userId);
+        //then
+        assertEquals(histories, fakeHistories);
+        assertEquals(histories.size(), fakeHistories.size());
+    }
+
+    @Test
+    @DisplayName("포인트 내역이 없는 사용자의 경우, 비어있는 내역 리스트를 리턴")
+    void retrievePointHistoryButEmpty() throws Exception {
         //given
         long userId = 3L;
         long time = System.currentTimeMillis();
