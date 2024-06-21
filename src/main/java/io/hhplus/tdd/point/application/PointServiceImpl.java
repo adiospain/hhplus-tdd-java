@@ -1,5 +1,6 @@
 package io.hhplus.tdd.point.application;
 
+import io.hhplus.tdd.point.domain.TransactionType;
 import io.hhplus.tdd.point.dto.PointHistory;
 import io.hhplus.tdd.point.dto.UserPoint;
 import io.hhplus.tdd.point.infrastructure.PointRepository;
@@ -17,6 +18,7 @@ public class PointServiceImpl implements PointService {
     @Override
     public UserPoint charge(long id, long amount) {
         UserPoint userPoint = pointRepository.findById(id);
+        pointRepository.insertHistory(id, amount, TransactionType.CHARGE, System.currentTimeMillis());
         return pointRepository.update(id, userPoint.point()+amount);
     }
 
@@ -29,11 +31,12 @@ public class PointServiceImpl implements PointService {
     public UserPoint use(long id, long amount) {
         UserPoint userPoint = pointRepository.findById(id);
         long remainingPoint = userPoint.point() - amount;
+        pointRepository.insertHistory(id, amount, TransactionType.USE, System.currentTimeMillis());
         return pointRepository.update(id, remainingPoint);
     }
 
     @Override
     public List<PointHistory> history(long id) {
-        return pointRepository.findHistoryById(id);
+        return pointRepository.findHistoryByUserId(id);
     }
 }
