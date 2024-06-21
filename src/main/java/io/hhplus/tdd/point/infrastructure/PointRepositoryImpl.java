@@ -36,11 +36,8 @@ public class PointRepositoryImpl implements PointRepository {
         return pointHistoryTable.selectAllByUserId(id);
     }
 
-
     @Override
     public PointHistory insertHistory(long userId, long amount, TransactionType type, long updateMillis) {
         return pointHistoryTable.insert(userId, amount, type, updateMillis);
     }
-
-
 }

@@ -12,5 +12,5 @@ public interface PointRepository {
     UserPoint insert(long id, long amount);
 
     List<PointHistory> findHistoryByUserId(long id);
-    PointHistory insertHistory(long userId, long amount, TransactionType type, long updateMillis);
+    PointHistory insertHistory (long userId, long amount, TransactionType type, long updateMillis);
 }

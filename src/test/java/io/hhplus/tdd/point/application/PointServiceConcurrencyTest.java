@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,29 +31,24 @@ public class PointServiceConcurrencyTest {
     @Test
     void chargePointConcurrency() throws InterruptedException {
         //given
-        long userId = 1L;
-        long chargeAmount = 300L;
+        pointService.charge(2L, 3000L);
 
         //when
-        int trial =5;
-        ExecutorService executorService =Executors.newFixedThreadPool(trial);
-        CountDownLatch latch = new CountDownLatch(trial);
+        CompletableFuture.allOf(
+                CompletableFuture.runAsync(()->{
+                    pointService.charge(2L, 4000L);
+                }),
+                CompletableFuture.runAsync(()->{
+                    pointService.charge(2L,7000L);
+                }),
+                CompletableFuture.runAsync(()->{
+                    pointService.charge(2L,1000L);
+                })
+        ).join();
 
-        for (int i = 0; i < trial; i++) {
-            executorService.submit(() -> {
-                try {
-                    pointService.charge(userId, chargeAmount);
-                } finally {
-                    latch.countDown();
-                }
-            });
-        }
-        latch.await();
-        executorService.shutdown();
-
-        // then
-        UserPoint userPoint = pointRepository.findById(userId);
-        assertEquals(chargeAmount * trial+1, userPoint.point());
+        //then
+        UserPoint userPoint = pointService.point(2L);
+        assertEquals(userPoint.point(), 3000+4000+7000+1000);
     }
 
     @Test
@@ -112,6 +108,51 @@ public class PointServiceConcurrencyTest {
         //then
         UserPoint userPoint = pointService.point(2L);
         assertEquals(userPoint.point(), 3000-3000+4000-4000+7000-1000);
+    }
+
+    @Test
+    void TwoPathConcurrently_Second() throws InterruptedException {
+        //given
+        pointService.charge(2L, 3000L);
+
+        //when
+        AtomicLong val = new AtomicLong(3000L);
+        CompletableFuture.allOf(
+                CompletableFuture.runAsync(() ->{
+                    pointService.use(2L, 3000L);
+                    System.out.println(1);
+                    val.addAndGet(-3000L);
+                    System.out.println(val.get());
+                }),
+                CompletableFuture.runAsync(()->{
+                    pointService.charge(2L, 4000L);
+                    System.out.println(2);
+                    val.addAndGet(4000L);
+                    System.out.println(val.get());
+                }),
+                CompletableFuture.runAsync(()->{
+                    pointService.use(2L,7000L);
+                    System.out.println(3);
+                    val.addAndGet(-7000L);
+                    System.out.println(val.get());
+                }),
+                CompletableFuture.runAsync(()->{
+                    pointService.charge(2L,7000L);
+                    System.out.println(4);
+                    val.addAndGet(7000L);
+                    System.out.println(val.get());
+                }),
+                CompletableFuture.runAsync(()->{
+                    pointService.use(2L,1000L);
+                    System.out.println(5);
+                    val.addAndGet(-1000L);
+                    System.out.println(val.get());
+                })
+        ).join();
+
+        //then
+        UserPoint userPoint = pointService.point(2L);
+        assertEquals(userPoint.point(), 3000-3000+4000+0+7000-1000);
     }
 
 }
