@@ -84,5 +84,35 @@ public class PointServiceConcurrencyTest {
         UserPoint userPoint = pointRepository.findById(userId);
         assertEquals(point - useAmount * trial, userPoint.point());
     }
+
+    @Test
+    void TwoPathConcurrently() throws InterruptedException {
+        //given
+        pointService.charge(2L, 3000L);
+
+        //when
+        CompletableFuture.allOf(
+                CompletableFuture.runAsync(() ->{
+                    pointService.use(2L, 3000L);
+                }),
+                CompletableFuture.runAsync(()->{
+                    pointService.charge(2L, 4000L);
+                }),
+                CompletableFuture.runAsync(()->{
+                    pointService.use(2L,4000L);
+                }),
+                CompletableFuture.runAsync(()->{
+                    pointService.charge(2L,7000L);
+                }),
+                CompletableFuture.runAsync(()->{
+                    pointService.use(2L,1000L);
+                })
+        ).join();
+
+        //then
+        UserPoint userPoint = pointService.point(2L);
+        assertEquals(userPoint.point(), 3000-3000+4000-4000+7000-1000);
+    }
+
 }
 
