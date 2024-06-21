@@ -41,11 +41,22 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public UserPoint use(long id, long amount) {
-        UserPoint userPoint = pointRepository.findById(id);
-        long remainingPoint = userPoint.point() - amount;
-        pointRepository.insertHistory(id, amount, TransactionType.USE, System.currentTimeMillis());
-        return pointRepository.update(id, remainingPoint);
+        try {
+            sema.acquire();
+            UserPoint userPoint = pointRepository.findById(id);
+            long remainingPoint = userPoint.point() - amount;
+            pointRepository.insertHistory(id, amount, TransactionType.USE, System.currentTimeMillis());
+            return pointRepository.update(id, remainingPoint);
+        }
+        catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+         finally {
+            pointRepository.insertHistory(id, amount, TransactionType.USE, System.currentTimeMillis());
+            sema.release();
+        }
     }
+
 
     @Override
     public List<PointHistory> history(long id) {

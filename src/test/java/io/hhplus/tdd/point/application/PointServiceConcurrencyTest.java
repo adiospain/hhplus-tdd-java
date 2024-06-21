@@ -54,5 +54,35 @@ public class PointServiceConcurrencyTest {
         UserPoint userPoint = pointRepository.findById(userId);
         assertEquals(chargeAmount * trial+1, userPoint.point());
     }
+
+    @Test
+    void usePointConcurrency() throws InterruptedException {
+        //given
+        long userId = 1L;
+        long point = 3000L;
+        long useAmount = 300L;
+        pointRepository.insert(userId, point);
+
+        //when
+        int trial = 5;
+        ExecutorService executorService =Executors.newFixedThreadPool(trial);
+        CountDownLatch latch = new CountDownLatch(trial);
+
+        for (int i = 0; i < trial; i++) {
+            executorService.submit(() -> {
+                try {
+                    pointService.use(userId, useAmount);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        executorService.shutdown();
+
+        // then
+        UserPoint userPoint = pointRepository.findById(userId);
+        assertEquals(point - useAmount * trial, userPoint.point());
+    }
 }
 
